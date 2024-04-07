@@ -1,0 +1,31 @@
+@font-face {
+  font-family: "Astro";
+  src: url("./asset/font/Astro/astro.ttf");
+}
+body {
+  display: flex;
+  margin: 0;
+  flex-direction: column;
+  background-image: url("/asset/fond-ecran-abstrait-nebuleuse-ultra-detaille-9.jpg");
+}
+h1 {
+  text-align: center;
+  color: antiquewhite;
+  font-family: "Astro";
+  font-size: 50px;
+  color: #ffffff;
+
+  text-shadow:
+    1px 3px 0 #969696,
+    1px 13px 5px #aba8a8;
+}
+canvas {
+  transform: translate(25px, 0);
+  box-shadow:
+    10px 10px 10px 10px #000000,
+    inset 10px 10px 15px 10px #000000,
+    10px 10px 15px 14px rgba(0, 0, 0, 0);
+  width: 98%;
+  height: 90%;
+  border-radius: 10px;
+}
