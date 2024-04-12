@@ -3,7 +3,12 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import WebGL from "three/addons/capabilities/WebGL.js";
 import { float } from "three/examples/jsm/nodes/Nodes.js";
-
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+import { LuminosityShader } from "three/addons/shaders/LuminosityShader.js";
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   100,
@@ -17,7 +22,8 @@ let controls;
 controls = new OrbitControls(camera, canvas);
 controls.maxDistance = 800;
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
+controls.dampingFactor = 0.5;
+camera.position.set(0, 0, 110);
 const loader = new GLTFLoader();
 loader;
 loader.load(
@@ -30,23 +36,32 @@ loader.load(
     console.error(error);
   }
 );
+/*Post processing*/
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+const glitchPass = new GlitchPass();
+composer.addPass(glitchPass);
+const outputPass = new OutputPass();
+composer.addPass(outputPass);
+const luminosityPass = new ShaderPass(LuminosityShader);
+composer.addPass(luminosityPass);
 /*wireframe/bg*/
 const geometry = new THREE.SphereGeometry(500, 500, 500).scale(-1, 1, 1);
 const wireframe = new THREE.WireframeGeometry(geometry);
 const line = new THREE.LineSegments(wireframe);
 line.material.depthTest = false;
-line.material.opacity = 0.005;
+line.material.opacity = 0.01;
 line.material.transparent = true;
 scene.add(line);
 const texture = new THREE.TextureLoader().load("/asset/space.jpg");
 const material = new THREE.MeshBasicMaterial({ map: texture });
-
 const mesh = new THREE.Mesh(geometry, material);
-const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 100);
 scene.add(mesh);
+const light = new THREE.PointLight(0xffffff, 1.5);
+light.position.set(1, 2, 3);
 scene.add(light);
-camera.position.set(0, 0, 110);
-light.position.set(0, 0, 2);
+scene.add(new THREE.AmbientLight(0xafafaf, 0.15));
 
 /*stars random*/
 const radius = 0.5;
@@ -54,9 +69,9 @@ const segments = 32;
 const vertices = [];
 
 for (let i = 0; i < 10000; i++) {
-  const x = THREE.MathUtils.randFloatSpread(800);
-  const y = THREE.MathUtils.randFloatSpread(800);
-  const z = THREE.MathUtils.randFloatSpread(800);
+  const x = THREE.MathUtils.randFloatSpread(700);
+  const y = THREE.MathUtils.randFloatSpread(700);
+  const z = THREE.MathUtils.randFloatSpread(700);
   vertices.push(x, y, z);
 }
 const geometrySpheres = new THREE.SphereGeometry(radius, segments, segments);
@@ -103,6 +118,15 @@ const mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
 const mercuryradius = 100;
 const mercuryspeed = 0.0002;
 scene.add(mercury);
+/*Venus*/
+const venuscenterOfOrbit = new THREE.Vector3(0, 0, 0);
+const venusGeometry = new THREE.SphereGeometry(20, 20, 20);
+const venustexture = new THREE.TextureLoader().load("/asset/venus_surface.jpg");
+const venusMaterial = new THREE.MeshBasicMaterial({ map: venustexture });
+const venus = new THREE.Mesh(venusGeometry, venusMaterial);
+const venusradius = 150;
+const venusspeed = 0.0008;
+scene.add(venus);
 /*Mars*/
 const marscenterOfOrbit = new THREE.Vector3(0, 0, 0);
 const marsGeometry = new THREE.SphereGeometry(40, 40, 40);
@@ -129,6 +153,7 @@ function Loop() {
     mercuryspeed,
     mercury
   );
+  createAndAnimatePlanet(venuscenterOfOrbit, venusradius, venusspeed, venus);
   requestAnimationFrame(Loop);
   mars.rotation.y = 0.001;
   earth.rotation.y += 0.01;
@@ -144,9 +169,6 @@ function Loop() {
   spheres.rotation.x += 0.001;
   spheres.rotation.y += 0.001;
   spheres.rotation.z += 0.0;
-  light.rotation.x += 0.0005;
-  light.rotation.y += 0.0005;
-  light.rotation.z += 0.0005;
 
   renderer.render(scene, camera);
   controls.update();
@@ -158,7 +180,7 @@ if (WebGL.isWebGLAvailable()) {
   const warning = WebGL.getWebGLErrorMessage();
   document.getElementById("container").appendChild(warning);
 }
-renderer.render(scene, camera);
+composer.render(scene, camera);
 
 loader.load(
   "path/to/model.glb",

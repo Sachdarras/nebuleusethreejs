@@ -4,6 +4,8 @@
 }
 body {
   background-image: url("/asset/fond-ecran-abstrait-nebuleuse-ultra-detaille-9.jpg");
+  max-width: 100vw;
+  max-height: 100vh;
 }
 h1 {
   text-align: center;
@@ -15,4 +17,10 @@ h1 {
   text-shadow:
     1px 3px 0 #969696,
     1px 13px 5px #aba8a8;
+}
+
+#canvas {
+  width: 90%;
+  transform: translateX(100px);
+  box-shadow: 5px 5px 5px 5px whitesmoke;
 }
