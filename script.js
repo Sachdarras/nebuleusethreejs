@@ -15,6 +15,8 @@ import mercuryTexture from "./asset/mercury.jpg";
 import venusTexture from "./asset/venus_surface.jpg";
 import marsTexture from "./asset/mars.jpg";
 
+import spaceTexture from "./asset/space.jpg";
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   100,
@@ -60,7 +62,7 @@ line.material.depthTest = false;
 line.material.opacity = 0.01;
 line.material.transparent = true;
 scene.add(line);
-const texture = new THREE.TextureLoader().load("./asset/space.jpg");
+const texture = new THREE.TextureLoader().load(spaceTexture);
 const material = new THREE.MeshBasicMaterial({ map: texture });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
