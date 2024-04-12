@@ -2,13 +2,19 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import WebGL from "three/addons/capabilities/WebGL.js";
-import { float } from "three/examples/jsm/nodes/Nodes.js";
+
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { LuminosityShader } from "three/addons/shaders/LuminosityShader.js";
+import earthTexture from "./asset/earth.jpg";
+import sunTexture from "./asset/sun.jpg";
+import mercuryTexture from "./asset/mercury.jpg";
+import venusTexture from "./asset/venus_surface.jpg";
+import marsTexture from "./asset/mars.jpg";
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   100,
@@ -94,7 +100,7 @@ scene.add(spheres);
 /*earth*/
 const earthcenterOfOrbit = new THREE.Vector3(0, 0, 0);
 const earthGeometry = new THREE.SphereGeometry(20, 20, 20); // Créer la géométrie de la sphère de la Terre
-const earthtexture = new THREE.TextureLoader().load("./asset/earth.jpg");
+const earthtexture = new THREE.TextureLoader().load(earthTexture);
 const earthMaterial = new THREE.MeshBasicMaterial({ map: earthtexture }); // Définir le matériau de la sphère de la Terre
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 const earthradius = 250;
@@ -104,7 +110,7 @@ scene.add(earth);
 /*sun*/
 
 const sunGeometry = new THREE.SphereGeometry(100, 100, 100);
-const suntexture = new THREE.TextureLoader().load("./asset/sun.jpg");
+const suntexture = new THREE.TextureLoader().load(sunTexture);
 const sunMaterial = new THREE.MeshBasicMaterial({ map: suntexture });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 scene.add(sun);
@@ -112,7 +118,7 @@ scene.add(sun);
 /*Mercury*/
 const mercurycenterOfOrbit = new THREE.Vector3(0, 0, 0);
 const mercuryGeometry = new THREE.SphereGeometry(20, 20, 20);
-const mercurytexture = new THREE.TextureLoader().load("./asset/mercury.jpg");
+const mercurytexture = new THREE.TextureLoader().load(mercuryTexture);
 const mercuryMaterial = new THREE.MeshBasicMaterial({ map: mercurytexture });
 const mercury = new THREE.Mesh(mercuryGeometry, mercuryMaterial);
 const mercuryradius = 100;
@@ -121,9 +127,8 @@ scene.add(mercury);
 /*Venus*/
 const venuscenterOfOrbit = new THREE.Vector3(0, 0, 0);
 const venusGeometry = new THREE.SphereGeometry(20, 20, 20);
-const venustexture = new THREE.TextureLoader().load(
-  "./asset/venus_surface.jpg"
-);
+
+const venustexture = new THREE.TextureLoader().load(venusTexture);
 const venusMaterial = new THREE.MeshBasicMaterial({ map: venustexture });
 const venus = new THREE.Mesh(venusGeometry, venusMaterial);
 const venusradius = 150;
@@ -132,7 +137,7 @@ scene.add(venus);
 /*Mars*/
 const marscenterOfOrbit = new THREE.Vector3(0, 0, 0);
 const marsGeometry = new THREE.SphereGeometry(40, 40, 40);
-const marstexture = new THREE.TextureLoader().load("./asset/mars.jpg");
+const marstexture = new THREE.TextureLoader().load(marsTexture);
 const marsMaterial = new THREE.MeshBasicMaterial({ map: marstexture });
 const mars = new THREE.Mesh(marsGeometry, marsMaterial);
 const marsradius = 300;
@@ -183,14 +188,3 @@ if (WebGL.isWebGLAvailable()) {
   document.getElementById("container").appendChild(warning);
 }
 composer.render(scene, camera);
-
-loader.load(
-  "path/to/model.glb",
-  function (gltf) {
-    scene.add(gltf.scene);
-  },
-  undefined,
-  function (error) {
-    console.error(error);
-  }
-);
